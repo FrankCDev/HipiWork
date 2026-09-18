@@ -2304,8 +2304,13 @@ async function loadModelsDevData(): Promise<Model<any>[]> {
 		}
 
 		// Process Kimi For Coding models
-		if (data["kimi-for-coding"]?.models) {
-			const kimiModels = data["kimi-for-coding"].models as Record<string, ModelsDevModel>;
+		// models.dev split the former `kimi-for-coding` provider into `kimi-code-plan-global`
+		// (https://api.kimi.ai/coding) and `kimi-code-plan-cn` (https://api.kimi.com/coding).
+		// Pi's `kimi-coding` provider targets the api.kimi.com/coding endpoint, so prefer the
+		// CN catalog and keep the retired key as a fallback.
+		const kimiCodingSource = data["kimi-code-plan-cn"] ?? data["kimi-for-coding"];
+		if (kimiCodingSource?.models) {
+			const kimiModels = kimiCodingSource.models as Record<string, ModelsDevModel>;
 			const hasCanonicalModel = Object.prototype.hasOwnProperty.call(kimiModels, "kimi-for-coding");
 
 			const kimiAliases = new Set(["k2p5", "k2p6", "k2p7"]);
