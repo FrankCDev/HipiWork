@@ -42,8 +42,22 @@ export function exportSessionForShare(filePath: string, session: AgentSession): 
 	]);
 }
 
+/**
+ * Sharing needs somewhere to view the exported session. HipiWork hosts no viewer, and
+ * the gist fallback link only used to resolve through pi.dev, so sharing stays off
+ * unless HIPI_SHARE_VIEWER_URL points at our own viewer.
+ */
+function isSessionSharingEnabled(): boolean {
+	return Boolean(process.env.HIPI_SHARE_VIEWER_URL?.trim());
+}
+
 /** Share the current session through Radius, falling back to a private gist. */
 export async function shareSession(context: SessionShareContext): Promise<void> {
+	if (!isSessionSharingEnabled()) {
+		context.showError("Session sharing is not available yet. Set HIPI_SHARE_VIEWER_URL to enable it.");
+		return;
+	}
+
 	const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "pi-share-"));
 	const jsonlFile = path.join(tempDir, "session.jsonl");
 	const htmlFile = path.join(tempDir, "session.html");

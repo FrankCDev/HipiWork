@@ -2,8 +2,22 @@ import { compare, valid } from "semver";
 import { fetchWithRetry } from "./management-http.ts";
 import { getPiUserAgent } from "./pi-user-agent.ts";
 
-const LATEST_VERSION_URL = "https://pi.dev/api/latest-version";
+const LATEST_VERSION_URL_ENV = "HIPI_LATEST_VERSION_URL";
 const DEFAULT_VERSION_CHECK_TIMEOUT_MS = 10000;
+
+/**
+ * HipiWork publishes no releases yet, so there is no feed to check against and the
+ * startup update check stays off instead of asking pi.dev. Point this at our own
+ * latest-version endpoint once releases exist.
+ */
+function getLatestVersionUrl(): string | undefined {
+	return process.env[LATEST_VERSION_URL_ENV]?.trim() || undefined;
+}
+
+/** True once a release feed is configured. Self-update needs one; see package-manager-cli. */
+export function isReleaseFeedConfigured(): boolean {
+	return getLatestVersionUrl() !== undefined;
+}
 
 export interface LatestPiRelease {
 	version: string;
@@ -52,10 +66,13 @@ export async function getLatestPiRelease(
 	currentVersion: string,
 	options: { timeoutMs?: number; retry?: boolean } = {},
 ): Promise<LatestPiRelease | undefined> {
-	if (process.env.PI_OFFLINE) return undefined;
+	if (process.env.HIPI_OFFLINE) return undefined;
+
+	const versionUrl = getLatestVersionUrl();
+	if (!versionUrl) return undefined;
 
 	const response = await fetchWithRetry(
-		LATEST_VERSION_URL,
+		versionUrl,
 		{
 			headers: {
 				"User-Agent": getPiUserAgent(currentVersion),
@@ -95,7 +112,7 @@ export async function getLatestPiVersion(
 }
 
 export async function checkForNewPiVersion(currentVersion: string): Promise<LatestPiRelease | undefined> {
-	if (process.env.PI_SKIP_VERSION_CHECK) return undefined;
+	if (process.env.HIPI_SKIP_VERSION_CHECK) return undefined;
 
 	try {
 		const latestRelease = await getLatestPiRelease(currentVersion);
