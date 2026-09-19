@@ -24,8 +24,8 @@ export const isBunBinary =
 export const isBunRuntime = !!process.versions.bun;
 
 /** Detect the esbuild-bundled Node.js distribution. */
-declare const PI_BUNDLED_NODE: boolean;
-export const isBundledNode = typeof PI_BUNDLED_NODE !== "undefined" && PI_BUNDLED_NODE;
+declare const HIPI_BUNDLED_NODE: boolean;
+export const isBundledNode = typeof HIPI_BUNDLED_NODE !== "undefined" && HIPI_BUNDLED_NODE;
 
 // =============================================================================
 // Install Method Detection
@@ -338,7 +338,7 @@ export function getSelfUpdateUnavailableInstruction(
 	const method = detectInstallMethod();
 	const target = normalizeSelfUpdatePackageTarget(updatePackageTarget);
 	if (method === "bun-binary") {
-		return `Download from: https://github.com/earendil-works/pi/releases/latest`;
+		return `Download from: ${REPO_URL}/releases/latest`;
 	}
 	const command = getSelfUpdateCommandForMethod(method, packageName, target, npmCommand);
 	if (command) {
@@ -388,7 +388,7 @@ export function findNodePackageDir(startDir: string): string {
 
 export function getPackageDir(): string {
 	// Allow override via environment variable (useful for Nix/Guix where store paths tokenize poorly)
-	const envDir = process.env.PI_PACKAGE_DIR;
+	const envDir = process.env.HIPI_PACKAGE_DIR;
 	if (envDir) {
 		return normalizePath(envDir);
 	}
@@ -504,7 +504,14 @@ export const APP_TITLE: string = piConfigName ? APP_NAME : "π";
 export const CONFIG_DIR_NAME: string = pkg.piConfig?.configDir || ".pi";
 export const VERSION: string = pkg.version || "0.0.0";
 
-// e.g., PI_CODING_AGENT_DIR or TAU_CODING_AGENT_DIR
+/**
+ * Project home for this fork. Every place where the CLI has to identify itself or
+ * link to its own project uses this instead of the upstream pi URLs.
+ */
+export const REPO_URL = "https://github.com/FrankCDev/HipiWork";
+export const CHANGELOG_URL = `${REPO_URL}/blob/main/packages/coding-agent/CHANGELOG.md`;
+
+// e.g., HIPI_CODING_AGENT_DIR or TAU_CODING_AGENT_DIR
 export const ENV_AGENT_DIR = `${APP_NAME.toUpperCase()}_CODING_AGENT_DIR`;
 export const ENV_SESSION_DIR = `${APP_NAME.toUpperCase()}_CODING_AGENT_SESSION_DIR`;
 
@@ -512,19 +519,21 @@ export function expandTildePath(path: string): string {
 	return normalizePath(path);
 }
 
-const DEFAULT_SHARE_VIEWER_URL = "https://pi.dev/session/";
+// HipiWork has no hosted session viewer, so /share is disabled (see shareSession) and this
+// stays empty. Set HIPI_SHARE_VIEWER_URL once a viewer exists.
+const DEFAULT_SHARE_VIEWER_URL = "";
 
-/** Get the share viewer URL for a gist ID. */
+/** Get the share viewer URL for a gist ID. Empty while no viewer is configured. */
 export function getShareViewerUrl(gistId: string): string {
-	const baseUrl = process.env.PI_SHARE_VIEWER_URL || DEFAULT_SHARE_VIEWER_URL;
-	return `${baseUrl}#${gistId}`;
+	const baseUrl = process.env.HIPI_SHARE_VIEWER_URL || DEFAULT_SHARE_VIEWER_URL;
+	return baseUrl ? `${baseUrl}#${gistId}` : "";
 }
 
 // =============================================================================
-// User Config Paths (~/.pi/agent/*)
+// User Config Paths (~/.hipi/agent/*)
 // =============================================================================
 
-/** Get the agent config directory (e.g., ~/.pi/agent/) */
+/** Get the agent config directory (e.g., ~/.hipi/agent/) */
 export function getAgentDir(): string {
 	const envDir = process.env[ENV_AGENT_DIR];
 	if (envDir) {

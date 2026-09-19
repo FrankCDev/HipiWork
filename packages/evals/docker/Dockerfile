@@ -37,8 +37,8 @@ ENTRYPOINT ["node", "--experimental-strip-types", "docker/entrypoint.ts"]
 
 FROM evaluator AS without_docs
 COPY --from=without-docs-install /opt/evaluator/install/node_modules /repo/node_modules
-ENV PI_EVAL_VARIANT=without_docs
+ENV HIPI_EVAL_VARIANT=without_docs
 
 FROM evaluator AS with_docs
 COPY --from=builder /opt/evaluator/install/node_modules /repo/node_modules
-ENV PI_EVAL_VARIANT=with_docs
+ENV HIPI_EVAL_VARIANT=with_docs

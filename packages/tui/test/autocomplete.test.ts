@@ -320,7 +320,7 @@ describe("CombinedAutocompleteProvider", () => {
 			setupFolder(baseDir, {
 				dirs: [".pi", ".github", ".git"],
 				files: {
-					".pi/config.json": "{}",
+					".hipi/config.json": "{}",
 					".github/workflows/ci.yml": "name: ci",
 					".git/config": "[core]",
 				},
@@ -331,7 +331,7 @@ describe("CombinedAutocompleteProvider", () => {
 			const result = await getSuggestions(provider, [line], 0, line.length);
 
 			const values = result?.items.map((item) => item.value) ?? [];
-			assert.ok(values.includes("@.pi/"));
+			assert.ok(values.includes("@.hipi/"));
 			assert.ok(values.includes("@.github/"));
 			assert.ok(!values.some((value) => value === "@.git" || value.startsWith("@.git/")));
 		});
