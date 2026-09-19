@@ -2,7 +2,7 @@ import { join, resolve } from "node:path";
 import { Text, type TUI, type TuiMouseEvent } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
-import { getReadmePath } from "../src/config.ts";
+import { CONFIG_DIR_NAME, getReadmePath } from "../src/config.ts";
 import type { ToolDefinition } from "../src/core/extensions/types.ts";
 import { type BashOperations, createBashToolDefinition } from "../src/core/tools/bash.ts";
 import { createReadTool, createReadToolDefinition } from "../src/core/tools/read.ts";
@@ -547,7 +547,7 @@ describe("ToolExecutionComponent parity", () => {
 		},
 		{
 			title: "AGENTS.md",
-			path: join(process.cwd(), ".pi", "AGENTS.md"),
+			path: join(process.cwd(), CONFIG_DIR_NAME, "AGENTS.md"),
 			content: "Hidden resource instructions",
 			compact: "read resource .hipi/AGENTS.md",
 			hidden: "Hidden resource instructions",
@@ -555,7 +555,7 @@ describe("ToolExecutionComponent parity", () => {
 		},
 		{
 			title: "AGENTS.override.md",
-			path: join(process.cwd(), ".pi", "AGENTS.override.md"),
+			path: join(process.cwd(), CONFIG_DIR_NAME, "AGENTS.override.md"),
 			content: "Hidden override instructions",
 			compact: "read resource .hipi/AGENTS.override.md",
 			hidden: "Hidden override instructions",

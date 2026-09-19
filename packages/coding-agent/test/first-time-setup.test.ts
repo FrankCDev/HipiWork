@@ -33,8 +33,11 @@ describe("shouldRunFirstTimeSetup", () => {
 		}
 	});
 
-	it("returns true when experimental, default agent dir, and no settings.json", () => {
-		expect(shouldRunFirstTimeSetup(settingsPath)).toBe(true);
+	it("does not run upstream first-time setup for a rebranded distribution", () => {
+		// HipiWork keeps OFFICIAL_CONFIG_DIR_NAME as ".pi" while CONFIG_DIR_NAME is
+		// ".hipi" (and APP_NAME is not "pi"), so isOfficialDistribution() is false and
+		// the upstream onboarding never triggers. This is intended, not a gap.
+		expect(shouldRunFirstTimeSetup(settingsPath)).toBe(false);
 	});
 
 	it("returns false when experimental features are disabled", () => {

@@ -1,7 +1,7 @@
 import { EventEmitter } from "node:events";
 import { readFileSync, writeFileSync } from "node:fs";
 import { PassThrough } from "node:stream";
-import { beforeAll, describe, expect, it, vi } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
 const childProcessMocks = vi.hoisted(() => ({
 	spawn: vi.fn(),
@@ -22,7 +22,24 @@ function deferred(): { promise: Promise<void>; resolve: () => void } {
 }
 
 describe("shareSession", () => {
-	beforeAll(() => initTheme("dark"));
+	let previousViewerUrl: string | undefined;
+
+	beforeAll(() => {
+		initTheme("dark");
+		// HipiWork ships no session viewer, so /share stays disabled until
+		// HIPI_SHARE_VIEWER_URL points somewhere. Set it so the export and gist
+		// path is exercised instead of the disabled-command early return.
+		previousViewerUrl = process.env.HIPI_SHARE_VIEWER_URL;
+		process.env.HIPI_SHARE_VIEWER_URL = "https://viewer.example.test/session/";
+	});
+
+	afterAll(() => {
+		if (previousViewerUrl === undefined) {
+			delete process.env.HIPI_SHARE_VIEWER_URL;
+		} else {
+			process.env.HIPI_SHARE_VIEWER_URL = previousViewerUrl;
+		}
+	});
 
 	it("keeps concurrent session exports isolated", async () => {
 		const uploads: string[] = [];
