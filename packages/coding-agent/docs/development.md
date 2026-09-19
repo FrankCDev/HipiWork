@@ -1,12 +1,12 @@
 # Development
 
-See [AGENTS.md](https://github.com/earendil-works/pi/blob/main/AGENTS.md) for additional guidelines.
+See [AGENTS.md](https://github.com/FrankCDev/HipiWork/blob/main/AGENTS.md) for additional guidelines.
 
 ## Setup
 
 ```bash
-git clone https://github.com/earendil-works/pi
-cd pi
+git clone https://github.com/FrankCDev/HipiWork
+cd hipi
 npm install
 npm run build
 ```
@@ -17,18 +17,18 @@ Run from source:
 /path/to/pi/pi-test.sh
 ```
 
-The script can be run from any directory. Pi keeps the caller's current working directory.
+The script can be run from any directory. hipi keeps the caller's current working directory.
 
 ### Experimental remote harness
 
 The remote harness server/client integration is development-only. Run it from the repository with:
 
 ```bash
-PI_EXPERIMENTAL=1 ./pi-test.sh server
-PI_EXPERIMENTAL=1 ./pi-test.sh client
+HIPI_EXPERIMENTAL=1 ./pi-test.sh server
+HIPI_EXPERIMENTAL=1 ./pi-test.sh client
 ```
 
-`PI_SERVER_DIR` overrides the server profile and socket directory (default: `~/.pi/server`). `PI_SERVER_ID` selects the logical server ID when `--server-id` is omitted.
+`HIPI_SERVER_DIR` overrides the server profile and socket directory (default: `~/.hipi/server`). `HIPI_SERVER_ID` selects the logical server ID when `--server-id` is omitted.
 
 The `client` and `experimental/plugin` package subpaths resolve only under the `source` condition in a checkout. Their implementations and the server/client commands are excluded from npm packages and standalone binaries. `pi-client`, `pi-protocol`, and `pi-server` are development dependencies of coding-agent, not runtime dependencies. The local SDK and stdio RPC API are unchanged.
 
@@ -39,8 +39,8 @@ Configure via `package.json`:
 ```json
 {
   "piConfig": {
-    "name": "pi",
-    "configDir": ".pi"
+    "name": "hipi",
+    "configDir": ".hipi"
   }
 }
 ```
@@ -61,7 +61,7 @@ Never use `__dirname` directly for package assets.
 
 ## Debug Command
 
-`/debug` (hidden) writes to `~/.pi/agent/pi-debug.log`:
+`/debug` (hidden) writes to `~/.hipi/agent/hipi-debug.log`:
 - Rendered TUI lines with ANSI codes
 - Last messages sent to the LLM
 

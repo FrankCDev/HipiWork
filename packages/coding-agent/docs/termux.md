@@ -1,6 +1,6 @@
 # Termux (Android) Setup
 
-Pi runs on Android via [Termux](https://termux.dev/), a terminal emulator and Linux environment for Android.
+hipi runs on Android via [Termux](https://termux.dev/), a terminal emulator and Linux environment for Android.
 
 ## Prerequisites
 
@@ -16,14 +16,18 @@ pkg update && pkg upgrade
 # Install dependencies
 pkg install nodejs termux-api git
 
-# Install pi
-npm install -g --ignore-scripts @earendil-works/pi-coding-agent
+# Build hipi from source (no published npm package yet)
+git clone https://github.com/FrankCDev/HipiWork.git
+cd HipiWork
+npm install --ignore-scripts
+npm run build
 
 # Create config directory
-mkdir -p ~/.pi/agent
+mkdir -p ~/.hipi/agent
 
-# Run pi
-pi
+# Define a shorthand, then run hipi
+alias hipi="node $PWD/packages/coding-agent/dist/bundle/cli.js"
+hipi
 ```
 
 ## Clipboard Support
@@ -34,7 +38,7 @@ Image clipboard is not supported on Termux (the `ctrl+v` image paste feature wil
 
 ## Example AGENTS.md for Termux
 
-Create `~/.pi/agent/AGENTS.md` to help the agent understand the Termux environment:
+Create `~/.hipi/agent/AGENTS.md` to help the agent understand the Termux environment:
 
 ````markdown
 # Agent Environment: Termux on Android
